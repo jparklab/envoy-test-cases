@@ -1,0 +1,80 @@
+Log message from the front envoy    
+
+    [2023-07-01 11:31:19.695][3523436][info][main] [source/server/server.cc:888] all clusters initialized. initializing init manager
+    [2023-07-01 11:31:19.695][3523436][info][config] [source/server/listener_manager_impl.cc:841] all dependencies initialized. starting workers
+    [2023-07-01 11:31:19.696][3523436][info][main] [source/server/server.cc:907] starting main dispatch loop
+    [2023-07-01 11:31:41.316][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:1788] [C1] updating connection-level initial window size to 131072
+    [2023-07-01 11:31:41.555][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:632] [C1] send buffer over limit 
+    [2023-07-01 11:31:45.051][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:639] [C1] send buffer under limit 
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.053][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    ...
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:715] [C1] error sending data frame: Too many frames in the outbound queue
+    [2023-07-01 11:31:45.392][3523444][debug][http2] [source/common/http/http2/codec_impl.cc:1665] [C1] error sending frames: Too many frames in the outbound queue.
+    [2023-07-01T11:31:41.316Z] "PUT /upload/bigfile HTTP/1.1" 502 UPE 537460736 87 4103 - "-" "curl/7.68.0" "96391d19-5a2f-4a2f-a85a-495f84d4573c" "127.0.0.1:6080" "127.0.0.1:7080"
+    [2023-07-01 11:46:19.695][3523436][info][main] [source/server/drain_manager_impl.cc:171] shutting down parent after drain
+
+
+Log message from the backend envoy
+
+    [2023-07-01 11:31:29.983][3523766][info][main] [source/server/server.cc:907] starting main dispatch loop
+    [2023-07-01 11:31:41.316][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:1788] [C0] updating connection-level initial window size to 268435456
+    [2023-07-01 11:31:41.319][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.320][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1031083 read_disable_count 1
+    [2023-07-01 11:31:41.321][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.322][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1046315 read_disable_count 1
+    [2023-07-01 11:31:41.323][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.323][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1045163 read_disable_count 1
+    [2023-07-01 11:31:41.324][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.325][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1044011 read_disable_count 1
+    [2023-07-01 11:31:41.325][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.326][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1042859 read_disable_count 1
+    [2023-07-01 11:31:41.327][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.328][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1041707 read_disable_count 1
+    [2023-07-01 11:31:41.328][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.329][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1040555 read_disable_count 1
+    [2023-07-01 11:31:41.330][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.331][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1039403 read_disable_count 1
+    [2023-07-01 11:31:41.332][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.333][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1038242 read_disable_count 1
+    [2023-07-01 11:31:41.333][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.334][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1037037 read_disable_count 1
+    [2023-07-01 11:31:41.335][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:41.335][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1035885 read_disable_count 1
+    [2023-07-01 11:31:41.336][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:45.039][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 244596736 read_disable_count 1
+    [2023-07-01 11:31:45.393][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01 11:31:45.394][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 enabled, unconsumed_bytes 1031040 read_disable_count 1
+    [2023-07-01 11:31:45.395][3523773][debug][http2] [source/common/http/http2/codec_impl.cc:449] [C0] Stream 1 disabled, unconsumed_bytes 0 read_disable_count 0
+    [2023-07-01T11:31:41.316Z] "PUT /upload/bigfile HTTP/2" 0 DC 348700672 0 4102 - "-" "curl/7.68.0" "96391d19-5a2f-4a2f-a85a-495f84d4573c" "127.0.0.1:6080" "127.0.0.1:17080"
+    [2023-07-01 11:46:29.982][3523766][info][main] [source/server/drain_manager_impl.cc:171] shutting down parent after drain
