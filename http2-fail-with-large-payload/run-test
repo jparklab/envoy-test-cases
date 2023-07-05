@@ -15,6 +15,7 @@ def run():
     parser.add_argument("-o", "--output-dir", help="output directory where logs will be stored", required=True)
     parser.add_argument("--large-file", help="path to a large file used for testing")
     parser.add_argument("--envoy-bin", help="path to envoy binary", default="envoy-v1.23.2")
+    parser.add_argument("--nginx-bin", help="path to nginx binary", default="nginx")
 
     args = parser.parse_args()
 
@@ -33,7 +34,7 @@ def run():
     try:
         # run nginx
         nginx_proc = subprocess.Popen(
-            ["nginx", "-p", output_dir, "-c", nginx_config],
+            [args.nginx_bin, "-p", output_dir, "-c", nginx_config],
             stdout=open(os.path.join(output_dir, "nginx.stdout"), "w"),
             stderr=open(os.path.join(output_dir, "nginx.stderr"), "w")
         )
