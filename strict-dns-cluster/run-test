@@ -1,0 +1,186 @@
+#!/usr/bin/python3
+import argparse
+import logging
+import os
+import requests
+import subprocess
+import sys
+import time
+
+from string import Template
+
+LOG = logging.getLogger("envoy-test")
+
+COREFILE_TEMPLATE = Template("""\
+example.com:16053 {
+    file $zone_file {
+        reload 1s
+    }
+    errors
+    health {
+        lameduck 1s
+    }
+    ready
+    reload
+    debug
+}
+""")
+
+ZONE_TEMPLATE = Template("""\
+; make sure to change the serial when updating the file
+$$ORIGIN example.com.
+; Start of Authority (SOA) record
+@   IN  SOA ns1.example.com. admin.example.com. (
+            $serial         ; Serial 
+            7200            ; Refresh (2 hours)
+            3600            ; Retry (1 hour)
+            1209600         ; Expire (2 weeks)
+            3600            ; Minimum TTL (1 hour)
+) 
+	IN  NS a.iana-servers.net.
+	IN  NS b.iana-servers.net.
+
+backend1     IN A     $backend1_ip
+backend2     IN A     $backend2_ip
+""")
+
+def generate_corefile(output_path, zone_file):
+    with open(output_path, "w") as f:
+        f.write(COREFILE_TEMPLATE.substitute(
+            zone_file=zone_file
+        ))
+
+def generate_zone_file(output_path, backend_ips):
+    serial = int(time.time())
+    with open(output_path, "w") as f:
+        f.write(ZONE_TEMPLATE.substitute(
+            serial=serial,
+            backend1_ip=backend_ips[0],
+            backend2_ip=backend_ips[1],
+        ))
+
+def run():
+    logging.basicConfig(level=logging.INFO)
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output-dir", help="output directory where logs will be stored", required=True)
+    parser.add_argument("--envoy-bin", help="path to envoy binary", default="envoy-v1.26.6")
+    parser.add_argument("--nginx-bin", help="path to nginx binary", default="nginx")
+
+    args = parser.parse_args()
+
+    test_dir = os.path.abspath(os.path.dirname(sys.argv[0]))
+    output_dir = os.path.abspath(args.output_dir)
+
+    envoy_bin = args.envoy_bin
+    if not os.path.exists(envoy_bin):
+        sys.exit(f"Unable to find {envoy_bin}, please set path to envoy binary using --envoy-bin option")
+
+    envoy_config = os.path.join(test_dir, "envoy.yaml")
+    nginx_config = os.path.join(test_dir, "nginx.conf")
+
+    processes = []
+    try:
+        # run nginx
+        nginx_proc = subprocess.Popen(
+            [args.nginx_bin, "-p", output_dir, "-c", nginx_config],
+            stdout=open(os.path.join(output_dir, "nginx.stdout"), "w"),
+            stderr=open(os.path.join(output_dir, "nginx.stderr"), "w")
+        )
+        processes.append(nginx_proc)
+
+        # run coredns
+        core_file = os.path.join(output_dir, "Corefile")
+        zone_file = os.path.join(output_dir, "example.com.db")
+
+        backend_ips = ["127.0.0.1", "127.0.0.2"]
+        LOG.info(f"Create zone file with IPs: {backend_ips}")
+        generate_zone_file(zone_file, backend_ips)
+        generate_corefile(core_file, zone_file)
+
+        coredns_proc = subprocess.Popen(
+            ["coredns", "-conf", core_file],
+            stdout=open(os.path.join(output_dir, "coredns.stdout"), "w"),
+            stderr=open(os.path.join(output_dir, "coredns.stderr"), "w")
+        )
+        processes.append(coredns_proc)
+
+        # run envoy
+        envoy_proc = subprocess.Popen(
+            [   envoy_bin, 
+                "-c", envoy_config,
+                "--base-id", "1",
+                # "--component-log-level", "http2:debug"
+            ],
+            stdout=open(os.path.join(output_dir, "envoy.stdout"), "w"),
+            stderr=open(os.path.join(output_dir, "envoy.stderr"), "w")
+        )
+        processes.append(envoy_proc)
+
+        frontend_addresses = [
+            ("without_healthcheck", "127.0.0.1:6080"),
+            ("with_healthcheck", "127.0.0.1:6090")
+        ]
+
+        time.sleep(3)
+        LOG.info("Checking if requests are routed to the backend servers")
+        for p in processes:
+            if p.poll() is not None:
+                raise Exception(f"Failed to start process {p.args}: {p.returncode}")
+
+        for name, addr in frontend_addresses:
+            LOG.info(f"Sending requests to {name} frontend: {addr}")
+            server_addrs = set()
+            for _ in range(10):
+                resp = requests.get(f"http://{addr}")
+                resp.raise_for_status()
+                try:
+                    server_addr = resp.json()["server_addr"]
+                    server_addrs.add(server_addr)
+                except Exception as e:
+                    raise Exception(f"Invalid response: {resp.text}. error: {e}")
+
+            if server_addrs != set(backend_ips):
+                raise Exception(f"Expected server addresses {backend_ips}, got {server_addrs}")
+
+        LOG.info(f"Requests are routed to the backend servers: {sorted(server_addrs)}")
+
+        # update DNS
+        backend_ips = ["127.0.1.1", "127.0.1.2"]
+        LOG.info(f"Update zone file with new IPs: {backend_ips}")
+        generate_zone_file(zone_file, backend_ips)
+        time.sleep(5)
+
+        LOG.info("Checking if requests are routed to the backend servers using updated IPs")
+        try:
+            for name, addr in frontend_addresses:
+                LOG.info(f"Sending requests to {name} frontend: {addr}")
+                server_addrs = set()
+                for _ in range(10):
+                    resp = requests.get(f"http://{addr}")
+                    resp.raise_for_status()
+                    try:
+                        server_addr = resp.json()["server_addr"]
+                        server_addrs.add(server_addr)
+                    except Exception as e:
+                        raise Exception(f"Invalid response: {resp.text}. error: {e}")
+
+                if server_addrs != set(backend_ips):
+                    raise Exception(f"Expected server addresses {backend_ips}, got {server_addrs}")
+        except:
+            LOG.info("Endpoints:\n {}".format(
+                requests.get("http://127.0.0.1:9901/config_dump?resource=static_endpoint_configs&include_eds").text
+            ))
+            raise
+
+        LOG.info(f"Requests are routed to the backend servers: {sorted(server_addrs)}")
+    finally:
+        for p in processes:
+            LOG.info(f"Terminating {p.args}")
+            p.terminate()
+            time.sleep(0.1)
+            p.kill()
+
+
+if __name__ == "__main__":
+    run()

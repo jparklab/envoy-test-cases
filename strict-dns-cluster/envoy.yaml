@@ -1,0 +1,162 @@
+node:
+  cluster: envoy
+  id: id-1
+  metadata:
+
+admin:
+  address:
+    socket_address:
+      address: 127.0.0.1
+      port_value: 9901
+
+static_resources:
+  listeners:
+  - name: listener_without_healthcheck
+    address:
+      socket_address:
+        address: 127.0.0.1
+        port_value: 6080
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          access_log:
+          - name: envoy.access_loggers.stdout
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: cluster_without_healthcheck }
+  - name: listener_with_healthcheck
+    address:
+      socket_address:
+        address: 127.0.0.1
+        port_value: 6090
+    filter_chains:
+    - filters:
+      - name: envoy.filters.network.http_connection_manager
+        typed_config:
+          "@type": type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager
+          stat_prefix: ingress_http
+          access_log:
+          - name: envoy.access_loggers.stdout
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.access_loggers.stream.v3.StdoutAccessLog
+          http_filters:
+          - name: envoy.filters.http.router
+            typed_config:
+              "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
+          route_config:
+            name: local_route
+            virtual_hosts:
+            - name: local_service
+              domains: ["*"]
+              routes:
+              - match: { prefix: "/" }
+                route: { cluster: cluster_with_healthcheck }
+  clusters:
+  - name: cluster_without_healthcheck
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    dns_refresh_rate: 1s              # How often DNS resolution is refreshed
+    dns_lookup_family: V4_ONLY        # Use IPv4 for DNS resolution (can also use AUTO or V6_ONLY)
+
+    typed_extension_protocol_options:
+      envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+        "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+        explicit_http_config:
+          http_protocol_options: {}
+    load_assignment:
+      cluster_name: cluster_without_healthcheck
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: backend1.example.com
+                port_value: 16080
+            hostname: backend1.example.com
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: backend2.example.com
+                port_value: 16080
+            hostname: backend2.example.com
+
+    typed_dns_resolver_config:
+      name: envoy.network.dns_resolver
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
+        resolvers:
+          - socket_address:
+              address: 127.0.0.1
+              port_value: 16053
+        dns_resolver_options:
+          use_tcp_for_dns_lookups: false  # Use UDP for DNS lookups
+          no_default_search_domain: true  # Do not append search domains
+
+  - name: cluster_with_healthcheck
+    connect_timeout: 0.25s
+    type: STRICT_DNS
+    lb_policy: ROUND_ROBIN
+    dns_refresh_rate: 1s              # How often DNS resolution is refreshed
+    dns_lookup_family: V4_ONLY        # Use IPv4 for DNS resolution (can also use AUTO or V6_ONLY)
+
+    typed_extension_protocol_options:
+      envoy.extensions.upstreams.http.v3.HttpProtocolOptions:
+        "@type": type.googleapis.com/envoy.extensions.upstreams.http.v3.HttpProtocolOptions
+        explicit_http_config:
+          http_protocol_options: {}
+    # NOTE: we see stale endpoints when health checks are enabled
+    health_checks:
+    - timeout: 1s                      # Timeout for health check
+      interval: 5s                     # Interval between health checks
+      unhealthy_threshold: 3           # Number of failures before marking unhealthy
+      healthy_threshold: 2             # Number of successes before marking healthy
+      http_health_check:
+        path: "/"                      # Path for the health check request
+        expected_statuses:
+        - start: 200
+          end: 300
+    load_assignment:
+      cluster_name: cluster_with_healthcheck
+      endpoints:
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: backend1.example.com
+                port_value: 16080
+            hostname: backend1.example.com
+      - lb_endpoints:
+        - endpoint:
+            address:
+              socket_address:
+                address: backend2.example.com
+                port_value: 16080
+            hostname: backend2.example.com
+
+    typed_dns_resolver_config:
+      name: envoy.network.dns_resolver
+      typed_config:
+        "@type": type.googleapis.com/envoy.extensions.network.dns_resolver.cares.v3.CaresDnsResolverConfig
+        resolvers:
+          - socket_address:
+              address: 127.0.0.1
+              port_value: 16053
+        dns_resolver_options:
+          use_tcp_for_dns_lookups: false  # Use UDP for DNS lookups
+          no_default_search_domain: true  # Do not append search domains
